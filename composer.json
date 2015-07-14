@@ -1,0 +1,19 @@
+{
+    "repositories" : [{
+        "type" : "package",
+        "package" : {
+            "name" : "carloshenrq/WebRequest",
+            "version" : "1.0.4",
+            "dist" : {
+                "url" : "https://github.com/carloshenrq/WebRequest/archive/v1.0.4-stable.zip",
+                "type" : "zip"
+            },
+            "autoload" : {
+                "files": ["autoload.php"]
+            }
+        }
+    }],
+    "require" : {
+        "carloshenrq/WebRequest" : "1.0.4"
+    }
+}
