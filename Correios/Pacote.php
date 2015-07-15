@@ -60,7 +60,7 @@ final class Pacote
     {
         $objRetorno = $this->tratarHTML2ARRAY(WebRequest\HttpRequest::createInstance()->post(self::HTTP_REQUEST, [
             'P_ITEMCODE' => '',
-            'P_LINGUA' => '001',
+            'P_LINGUA' => $this->getIdioma(),
             'P_TESTE' => '',
             'P_TIPO' => '001',
             'P_COD_UNI' => $this->getIdObjeto(),
@@ -154,6 +154,16 @@ final class Pacote
     public function getIdObjeto()
     {
         return $this->idObjeto;
+    }
+
+    /**
+     * Obtém o idioma informado no construtor.
+     *
+     * @return string
+     */
+    public function getIdioma()
+    {
+        return $this->idioma;
     }
 
     /**

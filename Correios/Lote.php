@@ -59,7 +59,7 @@ final class Lote
         $rastreamento = [];
         foreach($this->idPacote as $pacote)
         {
-            $obj = new Pacote($pacote);
+            $obj = new Pacote($pacote, $this->idioma);
             $rastreamento[] = $obj->rastrear();
         }
         return json_decode(json_encode($rastreamento));
