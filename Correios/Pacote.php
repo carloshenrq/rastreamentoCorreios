@@ -28,11 +28,19 @@ final class Pacote
     private $idObjeto;
 
     /**
+     * Identificação do idioma para busca.
+     *
+     * @var string
+     */
+    private $idioma;
+
+    /**
      * Construtor para a classe do pacote.
      *
      * @param string $idObjeto Código identificador do objeto.
+     * @param string $idioma Idioma para retorno dos dados. '001' => PT_BR, '002' => 'EN_US'
      */
-    public function __construct($idObjeto)
+    public function __construct($idObjeto, $idioma = '001')
     {
         // Verifica se o código do pacote está no padrão para teste de rastreamento.
         if(!preg_match(Pacote::REGEX_IDOBJETO, $idObjeto))
@@ -40,6 +48,7 @@ final class Pacote
             throw new \Exception('Código do pacote não está no formato correto.');
         }
         $this->idObjeto = $idObjeto;
+        $this->idioma = $idioma;
     }
 
     /**
@@ -49,7 +58,7 @@ final class Pacote
      */
     public function rastrear()
     {
-        $objRetorno = $this->tratarHTML2JSON(WebRequest\HttpRequest::createInstance()->post(self::HTTP_REQUEST, [
+        $objRetorno = $this->tratarHTML2ARRAY(WebRequest\HttpRequest::createInstance()->post(self::HTTP_REQUEST, [
             'P_ITEMCODE' => '',
             'P_LINGUA' => '001',
             'P_TESTE' => '',
@@ -58,7 +67,10 @@ final class Pacote
             'Z_ACTION' => 'Search'
         ], 'text'));
 
-        return $objRetorno;
+        return json_decode(json_encode([
+            'idObjeto' => $this->getIdObjeto(),
+            'rastreamento' => $objRetorno
+        ]));
     }
 
     /**
@@ -68,13 +80,13 @@ final class Pacote
      *
      * @return object Objeto de retorno.
      */
-    private function tratarHTML2JSON($sHTML)
+    private function tratarHTML2ARRAY($sHTML)
     {
         $iLength = strpos($sHTML, '<table  border cellpadding=1 hspace=10>');
         // Caso não localize a string, significa que retornou erro.
         if($iLength === false)
         {
-            return json_decode("[]");
+            return [];
         }
         // Realiza alguns tratamentos para deixar somente os <tr> e <td>
         //  para leitura do DOMDocument.
@@ -131,7 +143,7 @@ final class Pacote
             }
         }
         // Converte o array para objeto json.
-        return json_decode(json_encode($data));
+        return $data;
     }
 
     /**
