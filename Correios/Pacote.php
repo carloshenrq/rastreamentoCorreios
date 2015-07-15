@@ -90,6 +90,8 @@ final class Pacote
 
         $c = 0; // Posição dos dados para gerar o json.
         $data = []; // Dados que serão transformados no JSON.
+        $ultimo = '';
+        $ultimoTamanho = 0;
 
         // Varre todos os TR encontrados
         foreach($dom->getElementsByTagName('tr') as $i => $row)
@@ -97,6 +99,14 @@ final class Pacote
             // Primeira linha é cabeçalho de descrição, então pula.
             if($i == 0)
                 continue;
+
+            // Obtém todas as colunas da linha atual.
+            $columns = $row->getElementsByTagName('td');
+
+            // Caso esteja com 3 colunas, significa que não existe ação.
+            // Pula para o próximo.
+            if($columns->length == 3 && $i > 1)
+                $c++;
 
             // Caso não definido os dados para a posição, inicializa o vetor.
             if(!isset($data[$c]))
@@ -106,12 +116,10 @@ final class Pacote
                                 'info' => '',
                                 'acao' => ''
                             ];
-            // Obtém todas as colunas da linha atual.
-            $columns = $row->getElementsByTagName('td');
 
             // Linha impar: 3 colunas
             // Linha par  : 1 coluna
-            if(($i%2) == 1)
+            if($columns->length > 1)
             {
                 $data[$c]['data'] = $columns->item(0)->nodeValue;
                 $data[$c]['local'] = $columns->item(1)->nodeValue;
@@ -120,7 +128,6 @@ final class Pacote
             else
             {
                 $data[$c]['acao'] = $columns->item(0)->nodeValue;
-                $c++;
             }
         }
         // Converte o array para objeto json.
